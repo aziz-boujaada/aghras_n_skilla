@@ -4,5 +4,5 @@ import tailwindcss from "@tailwindcss/vite";
 
 export default defineConfig({
   plugins: [react(), tailwindcss()],
-  base: "/agharas-n-skilla/",
+  base: "/agharas_n_skilla/",
 });
