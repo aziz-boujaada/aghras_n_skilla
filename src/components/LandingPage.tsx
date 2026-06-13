@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { motion } from 'framer-motion';
 import {
   Bus,
@@ -8,9 +8,7 @@ import {
   FileText,
   Menu,
   X,
-  TrendingUp,
   ShieldCheck,
-  Clock,
   ArrowLeft,
   CheckCircle2,
   AlertTriangle,
@@ -38,7 +36,7 @@ const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
 
   return (
-    <nav className="fixed top-0 w-full z-50 glass-panel border-b border-gray-200/50">
+    <nav className="fixed top-0 z-50 w-full border-b border-slate-200 bg-white lg:border-white/20 lg:bg-white/70 lg:backdrop-blur-xl lg:shadow-lg">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between h-20 items-center">
           <div className="flex items-center">
@@ -65,7 +63,7 @@ const Navbar = () => {
           <div className="flex items-center md:hidden">
             <button
               onClick={() => setIsOpen(!isOpen)}
-              className="text-slate-900 focus:outline-none p-2"
+              className="text-slate-900 focus:outline-none  p-2"
             >
               {isOpen ? <X size={28} /> : <Menu size={28} />}
             </button>
