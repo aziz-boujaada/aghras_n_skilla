@@ -16,7 +16,7 @@ import {
   BadgeCheck,
   Building2,
 } from "lucide-react";
-import { RegisterForm } from "./Auth/Register";
+
 import { useNavigate } from "react-router-dom";
 
 const fadeIn = {
@@ -925,7 +925,7 @@ export default function Landing() {
         <AdvancedAnalytics />
         <StatsRibbon />
         <CallToAction />
-        <RegisterForm />
+       
       </main>
       <Footer />
     </div>

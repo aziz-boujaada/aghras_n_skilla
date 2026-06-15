@@ -179,9 +179,9 @@ export const LoginForm: React.FC = () => {
           </form>
         </div>
 
-        {/* 🎨 الجهة 2: الـ Flex Side الـمقتبس من ديزاين الـ Landing Page */}
+      
         <div className="w-full md:w-1/2 bg-[#0f172a] p-12 hidden md:flex flex-col justify-between relative overflow-hidden">
-          {/* لمسة ديكور خفيفة فـ الخلفية */}
+      
           <div className="absolute top-0 right-0 w-64 h-64 bg-slate-800/20 rounded-full blur-3xl"></div>
 
           <div className="relative z-10">
@@ -195,7 +195,7 @@ export const LoginForm: React.FC = () => {
             </h3>
           </div>
 
-          {/* محاكاة مصغرة للكارت الداكن لي عندك فـ الـ Landing Page */}
+       
           <div className="bg-[#1e293b]/60 backdrop-blur-md border border-slate-700/40 p-6 rounded-2xl shadow-2xl relative z-10 transform translate-y-4 transition-transform hover:translate-y-2 duration-300">
             <div className="flex justify-between items-center mb-4">
               <span className="text-xs text-slate-400 font-mono">

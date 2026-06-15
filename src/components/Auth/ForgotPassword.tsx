@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { api } from "../../utils/axios";
 import { useNavigate } from "react-router-dom";
 
@@ -13,15 +13,28 @@ export const ForgotPassword: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
+  
+  const [timeLeft, setTimeLeft] = useState<number>(300);
 
-  const handleSendOtp = async (e: React.FormEvent) => {
-    e.preventDefault();
+  useEffect(() => {
+    if (step !== 2 || timeLeft <= 0) return;
+    const timer = setInterval(() => {
+      setTimeLeft((prev) => prev - 1);
+    }, 1000);
+    return () => clearInterval(timer);
+  }, [step, timeLeft]);
+
+  const progress = (timeLeft / 300) * 100;
+
+  const handleSendOtp = async (e?: React.FormEvent) => {
+    if (e) e.preventDefault();
     setLoading(true);
     setError(null);
     setSuccess(null);
     try {
       const response = await api.post("/forgot-password/send-otp", { phone });
       setSuccess(response.data.message);
+      setTimeLeft(300);
       setStep(2);
     } catch (err: any) {
       setError(err.response?.data?.message || "حدث خطأ أثناء إرسال الكود.");
@@ -32,6 +45,12 @@ export const ForgotPassword: React.FC = () => {
 
   const handleResetPassword = async (e: React.FormEvent) => {
     e.preventDefault();
+    
+    if (timeLeft === 0) {
+      setError("انتهت صلاحية رمز الـ OTP. يرجى إعادة إرسال الكود.");
+      return;
+    }
+
     setLoading(true);
     setError(null);
 
@@ -115,16 +134,43 @@ export const ForgotPassword: React.FC = () => {
                 <label className="block text-sm font-bold text-slate-700 mb-2">
                   كود التفعيل (OTP)
                 </label>
-                <input
-                  type="text"
-                  value={otp}
-                  onChange={(e) => setOtp(e.target.value)}
-                  placeholder="123456"
-                  maxLength={6}
-                  className="w-full px-4 py-3 text-center tracking-widest font-bold bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#dca543] focus:bg-white transition-all text-xl text-[#0f172a]"
-                  required
-                />
+                
+                <div className="flex items-center gap-4 bg-slate-50 border border-slate-200 p-2 rounded-xl focus-within:ring-2 focus-within:ring-[#dca543] transition-all">
+                  <div className="relative w-12 h-12 flex-shrink-0">
+                    <svg className="w-full h-full transform -rotate-90">
+                      <circle cx="24" cy="24" r="20" stroke="currentColor" strokeWidth="4" fill="transparent" className="text-slate-200" />
+                      <circle cx="24" cy="24" r="20" stroke="currentColor" strokeWidth="4" fill="transparent" strokeDasharray={126} strokeDashoffset={126 - (126 * progress) / 100} className="text-[#dca543] transition-all duration-1000 ease-linear" strokeLinecap="round" />
+                    </svg>
+                    <span className="absolute inset-0 flex items-center justify-center text-xs font-mono font-bold text-[#0f172a]">
+                      {Math.floor(timeLeft / 60)}:{(timeLeft % 60).toString().padStart(2, '0')}
+                    </span>
+                  </div>
+
+                  <input
+                    type="text"
+                    value={otp}
+                    onChange={(e) => setOtp(e.target.value)}
+                    placeholder="123456"
+                    maxLength={6}
+                    disabled={timeLeft === 0}
+                    className="w-full bg-transparent text-center tracking-widest font-bold focus:outline-none text-xl text-[#0f172a] disabled:opacity-60"
+                    required
+                  />
+                </div>
               </div>
+
+              {timeLeft === 0 && (
+                <div className="text-center pt-1">
+                  <button
+                    type="button"
+                    onClick={() => handleSendOtp()}
+                    disabled={loading}
+                    className="text-sm font-bold text-[#dca543] hover:text-[#c48f35] transition-colors"
+                  >
+                    {loading ? "جاري إعادة الإرسال..." : "إعادة إرسال الرمز؟"}
+                  </button>
+                </div>
+              )}
 
               <div>
                 <label className="block text-sm font-bold text-slate-700 mb-2">
@@ -157,7 +203,7 @@ export const ForgotPassword: React.FC = () => {
               <div className="pt-2">
                 <button
                   type="submit"
-                  disabled={loading}
+                  disabled={loading || timeLeft === 0}
                   className="w-full text-center font-bold text-white bg-[#0f172a] px-5 py-3.5 hover:bg-[#1e293b] active:scale-[0.98] transition-all rounded-xl shadow-lg disabled:bg-slate-400"
                 >
                   {loading ? "جاري التحديث..." : "تحديث كلمة المرور"}
@@ -201,7 +247,7 @@ export const ForgotPassword: React.FC = () => {
             <div className="space-y-3">
               <div className="h-3 bg-slate-700/50 rounded w-1/4"></div>
               <div className="h-12 bg-slate-800/60 rounded-xl border border-slate-700/30 flex items-center justify-center text-[#dca543] font-mono tracking-widest font-bold">
-                SMS OTP SECURE
+                {step === 2 && timeLeft > 0 ? `OTP VALID: ${Math.floor(timeLeft / 60)}:${(timeLeft % 60).toString().padStart(2, '0')}` : "SMS OTP SECURE"}
               </div>
             </div>
           </div>
